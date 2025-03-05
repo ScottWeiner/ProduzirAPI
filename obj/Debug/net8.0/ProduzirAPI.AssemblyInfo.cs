@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ProduzirAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c43e3618dc29894eeeae3f1fd7303d2fc4f5d427")]
 [assembly: System.Reflection.AssemblyProductAttribute("ProduzirAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ProduzirAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
