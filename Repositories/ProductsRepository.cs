@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProduzirAPI.Data;
 using ProduzirAPI.Models.Domain;
@@ -26,21 +28,30 @@ namespace ProduzirAPI.Repositories
 
         public async Task<Product?> GetProductByIdAsync(int id)
         {
-            return await _context.Products.FindAsync(id);
+            return await _context.Products
+                .Include(c => c.ProductClass)
+                .Where(p => p.Id == id)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<Product> CreateProductAsync(Product product)
         {
             await _context.Products.AddAsync(product);
             await _context.SaveChangesAsync();
+
             return product;
+
         }
 
-        public async Task<Product> UpdateProductAsync(Product product)
+        public async Task<bool> UpdateProductAsync(Product product)
         {
+
+
             _context.Products.Update(product);
-            await _context.SaveChangesAsync();
-            return product;
+            return await _context.SaveChangesAsync() > 1;
+
+
+
         }
 
         public async Task<bool> DeleteProductAsync(int id)
@@ -51,10 +62,16 @@ namespace ProduzirAPI.Repositories
                 return false;
             }
             _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
-            return true;
+            return await _context.SaveChangesAsync() > 0;
+
         }
+
+        public async Task<ProductClass?> GetProductClassById(int classId)
+        {
+            return await _context.ProductClasses.FirstOrDefaultAsync(x => x.Id == classId);
+
+
+        }
+
     }
-
-
 }

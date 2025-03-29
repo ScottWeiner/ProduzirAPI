@@ -13,8 +13,15 @@ namespace ProduzirAPI.Models
         public MappingProfiles()
         {
 
+            RecognizePrefixes("Product");
+
             CreateMap<Product, ProductDTO>()
-            .ForMember(dest => dest.ClassName, opt => opt.MapFrom(src => src.ProductClass.Name));
+            .ForMember(dest => dest.ClassName, opt => opt.MapFrom(src => src.ProductClass.Name))
+            .ForMember(dest => dest.ClassId, opt => opt.MapFrom(src => src.ProductClass.Id))
+            ;
+
+
+
 
         }
     }
