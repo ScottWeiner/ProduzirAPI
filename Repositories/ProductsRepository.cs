@@ -47,8 +47,7 @@ namespace ProduzirAPI.Repositories
         {
 
 
-            _context.Products.Update(product);
-            return await _context.SaveChangesAsync() > 1;
+            return await _context.SaveChangesAsync() > 0;
 
 
 

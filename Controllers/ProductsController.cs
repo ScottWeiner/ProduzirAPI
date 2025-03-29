@@ -42,18 +42,15 @@ namespace ProduzirAPI.Controllers
         {
             if (createProductDto != null)
             {
-                var newProductClass = await _productsRepository.GetProductClassById(createProductDto.ClassId);
-                if (newProductClass == null)
-                {
-                    return BadRequest("Invalid Product Class");
-                }
+                var classStub = new ProductClass { Id = createProductDto.ClassId };
+
                 var newProduct = new Product
                 {
                     Number = createProductDto.Number,
                     Description = createProductDto.Description,
                     Weight = createProductDto.Weight,
 
-                    ProductClass = newProductClass
+                    ProductClass = new ProductClass { Id = createProductDto.ClassId }
                 };
 
                 await _productsRepository.CreateProductAsync(newProduct);
@@ -82,7 +79,7 @@ namespace ProduzirAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<ProductDTO>> UpdateProduct([FromForm] ProductDTO productDto)
+        public async Task<ActionResult<ProductDTO>> UpdateProduct(ProductDTO productDto)
         {
             var productToUpdate = await _productsRepository.GetProductByIdAsync(productDto.Id);
 
@@ -91,9 +88,11 @@ namespace ProduzirAPI.Controllers
                 return BadRequest("That product does not exist");
             }
 
-            _mapper.Map(productDto, productToUpdate);
+            productToUpdate.Description = productDto.Description;
 
-            var success = await _productsRepository.UpdateProductAsync(productToUpdate);
+
+
+            bool success = await _productsRepository.UpdateProductAsync(productToUpdate);
 
             if (success)
             {

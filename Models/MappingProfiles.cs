@@ -18,6 +18,7 @@ namespace ProduzirAPI.Models
             CreateMap<Product, ProductDTO>()
             .ForMember(dest => dest.ClassName, opt => opt.MapFrom(src => src.ProductClass.Name))
             .ForMember(dest => dest.ClassId, opt => opt.MapFrom(src => src.ProductClass.Id))
+            .ReverseMap()
             ;
 
 
