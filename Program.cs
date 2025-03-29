@@ -1,6 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using ProduzirAPI.Data;
 using ProduzirAPI.Repositories;
+using AutoMapper;
+
+using ProduzirAPI.Models;
 
 // Services Container
 var builder = WebApplication.CreateBuilder(args);
@@ -37,6 +40,8 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 {
     opt.UseNpgsql(connString);
 });
+
+builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 
 var app = builder.Build();
 

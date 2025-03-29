@@ -6,13 +6,13 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ProduzirAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class FixModelRelationships : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "PRODUCT_CLASSES",
+                name: "PRODUCT_CLASS",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -22,11 +22,11 @@ namespace ProduzirAPI.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PRODUCT_CLASSES", x => x.Id);
+                    table.PrimaryKey("PK_PRODUCT_CLASS", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "PRODUCTS",
+                name: "PRODUCT",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -39,18 +39,18 @@ namespace ProduzirAPI.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PRODUCTS", x => x.Id);
+                    table.PrimaryKey("PK_PRODUCT", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PRODUCTS_PRODUCT_CLASSES_ProductClassId",
+                        name: "FK_PRODUCT_PRODUCT_CLASS_ProductClassId",
                         column: x => x.ProductClassId,
-                        principalTable: "PRODUCT_CLASSES",
+                        principalTable: "PRODUCT_CLASS",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_PRODUCTS_ProductClassId",
-                table: "PRODUCTS",
+                name: "IX_PRODUCT_ProductClassId",
+                table: "PRODUCT",
                 column: "ProductClassId");
         }
 
@@ -58,10 +58,10 @@ namespace ProduzirAPI.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "PRODUCTS");
+                name: "PRODUCT");
 
             migrationBuilder.DropTable(
-                name: "PRODUCT_CLASSES");
+                name: "PRODUCT_CLASS");
         }
     }
 }

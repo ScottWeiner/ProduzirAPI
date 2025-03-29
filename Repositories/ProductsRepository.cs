@@ -19,7 +19,9 @@ namespace ProduzirAPI.Repositories
 
         public async Task<IEnumerable<Product>> GetAllProductsAsync()
         {
-            return await _context.Products.ToListAsync();
+            return await _context.Products
+               .Include(c => c.ProductClass)
+                .ToListAsync();
         }
 
         public async Task<Product?> GetProductByIdAsync(int id)

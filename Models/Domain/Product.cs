@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ProduzirAPI.Models.Domain
 {
-    [Table("PRODUCTS")]
+    [Table("PRODUCT")]
 
     public class Product
     {
@@ -19,7 +19,7 @@ namespace ProduzirAPI.Models.Domain
         public required decimal Weight { get; set; }
 
         public required ProductClass ProductClass { get; set; }
-        public int ProductClassId { get; set; }
+
 
         public string? ImageUrl { get; set; }
 

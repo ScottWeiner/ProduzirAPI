@@ -11,8 +11,8 @@ using ProduzirAPI.Data;
 namespace ProduzirAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250302222720_Second")]
-    partial class Second
+    [Migration("20250329000527_FixModelRelationships")]
+    partial class FixModelRelationships
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -52,7 +52,7 @@ namespace ProduzirAPI.Migrations
 
                     b.HasIndex("ProductClassId");
 
-                    b.ToTable("PRODUCTS");
+                    b.ToTable("PRODUCT");
                 });
 
             modelBuilder.Entity("ProduzirAPI.Models.Domain.ProductClass", b =>
@@ -73,18 +73,23 @@ namespace ProduzirAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PRODUCT_CLASSES");
+                    b.ToTable("PRODUCT_CLASS");
                 });
 
             modelBuilder.Entity("ProduzirAPI.Models.Domain.Product", b =>
                 {
                     b.HasOne("ProduzirAPI.Models.Domain.ProductClass", "ProductClass")
-                        .WithMany()
+                        .WithMany("Products")
                         .HasForeignKey("ProductClassId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ProductClass");
+                });
+
+            modelBuilder.Entity("ProduzirAPI.Models.Domain.ProductClass", b =>
+                {
+                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }

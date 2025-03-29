@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5227:5227"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5227
+      - ConnectionStrings__DefaultConnection=Host=db;Database=produzirDB;User ID=postgres;Password=postgrespw
+    develop:
+      watch:
+        - action: sync
+          path: .
+          target: /app
+          ignore:
+            - bin/
+            - obj/
+            - node_modules/
+            - .git/
+        - action: rebuild
+          path: ProduzirAPI.csproj
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  db:
+    image: postgres:16
+    container_name: postgres_db
+    environment:
+      - POSTGRES_DB=produzirDB
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgrespw
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

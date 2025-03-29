@@ -16,5 +16,15 @@ namespace ProduzirAPI.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductClass> ProductClasses { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<ProductClass>()
+                .HasMany(p => p.Products);
+        }
+
     }
+
+
 }
