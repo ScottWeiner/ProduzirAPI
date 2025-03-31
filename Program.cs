@@ -11,6 +11,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "AllowSpecficOrigins", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod();
+    });
+});
 
 // Register repository here, before building the app
 builder.Services.AddScoped<IProductsRepository, ProductsRepository>();
@@ -50,11 +57,13 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseCors("AllowSpecficOrigins");
 }
 
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
 
 // Map controllers so the endpoints match what I call them when establishing the Controller Classes ("api/[controller]")
 app.MapControllers();

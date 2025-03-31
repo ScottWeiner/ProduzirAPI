@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProduzirAPI.Models.Domain;
@@ -38,11 +40,18 @@ namespace ProduzirAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ProductDTO>> CreateProduct([FromBody] CreateProductDTO createProductDto)
+        public async Task<ActionResult<ProductDTO>> CreateProduct([FromForm] CreateProductDTO createProductDto)
         {
             if (createProductDto != null)
             {
-                var classStub = new ProductClass { Id = createProductDto.ClassId };
+
+                var classObject = await _productsRepository.GetProductClassById(createProductDto.ClassId);
+                if (classObject == null)
+                {
+                    return BadRequest("Product Class not found");
+                }
+
+                Console.WriteLine(JsonSerializer.Serialize(createProductDto));
 
                 var newProduct = new Product
                 {
@@ -50,7 +59,7 @@ namespace ProduzirAPI.Controllers
                     Description = createProductDto.Description,
                     Weight = createProductDto.Weight,
 
-                    ProductClass = new ProductClass { Id = createProductDto.ClassId }
+                    ProductClass = classObject
                 };
 
                 await _productsRepository.CreateProductAsync(newProduct);
@@ -79,18 +88,29 @@ namespace ProduzirAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<ProductDTO>> UpdateProduct(ProductDTO productDto)
+        public async Task<ActionResult<ProductDTO>> UpdateProduct([FromForm] UpdateProductDTO updateProductDto)
         {
-            var productToUpdate = await _productsRepository.GetProductByIdAsync(productDto.Id);
+            var productToUpdate = await _productsRepository.GetProductByIdAsync(updateProductDto.Id);
 
             if (productToUpdate == null)
             {
                 return BadRequest("That product does not exist");
             }
 
-            productToUpdate.Description = productDto.Description;
+            productToUpdate.Description = updateProductDto.Description;
+            productToUpdate.Weight = updateProductDto.Weight;
+            productToUpdate.ImageUrl = updateProductDto.ImageUrl;
 
+            if (productToUpdate.ProductClass.Id != updateProductDto.ClassId)
+            {
+                var newClass = await _productsRepository.GetProductClassById(updateProductDto.ClassId);
+                if (newClass != null)
+                {
+                    productToUpdate.ProductClass = newClass;
+                }
+                //Else, don't change anything about it if we can't find a product_class
 
+            }
 
             bool success = await _productsRepository.UpdateProductAsync(productToUpdate);
 
@@ -102,6 +122,22 @@ namespace ProduzirAPI.Controllers
             return BadRequest("Product did not update correctly");
 
 
+        }
+
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult?> DeleteProductById(int id)
+        {
+
+
+            var success = await _productsRepository.DeleteProductAsync(id);
+
+            if (success)
+            {
+                return Ok("product successfully deleted");
+            }
+
+            return BadRequest("Can't find that product for deletion!");
         }
     }
 }
